@@ -1,5 +1,5 @@
 package tu.rs;
 
-public class Client {
-	//testasf
+public class Client{
+//gg
 }
