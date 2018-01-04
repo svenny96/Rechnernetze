@@ -5,7 +5,7 @@ public class PeerListEntry {
 	private String ip;
 	private int port;
 	private long lastPoke;
-	private boolean isActive = false;
+	private boolean isActive;;
 	
 	
 	public PeerListEntry(String name,String ip,int port)
@@ -13,6 +13,8 @@ public class PeerListEntry {
 		this.name = name;
 		this.ip = ip;
 		this.port = port;
+		this.isActive = true;
+		this.lastPoke = System.currentTimeMillis() / 1000L; //UnixTime
 	
 	}
 	

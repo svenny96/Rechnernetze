@@ -28,7 +28,7 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 		
 		try {
 			sSocket = new ServerSocket(port);
-			ServerThread sThread = new ServerThread(sSocket);
+			ServerThread sThread = new ServerThread(sSocket,this);
 			sThread.start();
 			UserInputThread uiThread = new UserInputThread(this);
 			uiThread.start();
@@ -83,7 +83,7 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 	}
 
 
-	public ArrayList<PeerListEntry> getKnownPeers() {
+	public synchronized ArrayList<PeerListEntry> getKnownPeers() {
 		return knownPeers;
 	}
 

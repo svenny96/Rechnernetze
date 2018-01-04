@@ -5,11 +5,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class ServerThread extends Thread {
-
+	
+	private Peer peer;
 	private ServerSocket server;
 	
-	public ServerThread(ServerSocket server)
+	public ServerThread(ServerSocket server, Peer peer)
 	{
+		this.peer = peer;
 		this.server = server; //testggggggggg
 	}
 	
@@ -23,7 +25,7 @@ public class ServerThread extends Thread {
 			{
 				Socket client = server.accept();
 				System.out.println(client.getInetAddress());
-				ClientHandler cHandler = new ClientHandler(client);
+				ClientHandler cHandler = new ClientHandler(client,peer.getKnownPeers());
 				cHandler.start();
 			}	
 			
