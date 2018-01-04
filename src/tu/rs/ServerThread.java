@@ -10,7 +10,7 @@ public class ServerThread extends Thread {
 	
 	public ServerThread(ServerSocket server)
 	{
-		this.server = server; //test
+		this.server = server; //testggggg
 	}
 	
 	@Override
