@@ -11,16 +11,18 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class ClientHandler extends Thread  {
 
 	private Socket client;
 	private ArrayList<PeerListEntry> knownPeers;
 	private InetAddress addr;
+	private Peer peer;
 	
-	
-	public ClientHandler( Socket socket, ArrayList<PeerListEntry> arr) {
+	public ClientHandler(Peer peer, Socket socket, ArrayList<PeerListEntry> arr) {
 		
+		this.peer = peer;
 		this.client = socket;
 		this.knownPeers = arr;
 	}
@@ -29,7 +31,7 @@ public class ClientHandler extends Thread  {
 	public void run()
 	{
 		addr = client.getInetAddress();
-		System.out.println("Eingehender Verbindung von:"+ addr.getHostAddress()+":"+client.getPort());
+		System.out.println("Eingehende Verbindung von:"+ addr.getHostAddress()+":"+client.getPort());
 		try {
 			
 			PrintWriter out = new PrintWriter(client.getOutputStream(),true);
@@ -40,18 +42,39 @@ public class ClientHandler extends Thread  {
 			{
 				
 				String[] test =	strInput.split(" ");
+				PeerListEntry commPeer = new PeerListEntry(test[1],test[2],Integer.parseInt(test[3]));
 				
 				if(test[0].equalsIgnoreCase("POKE"))
 				{
 					
+					if(exists(commPeer))
+					{
+						commPeer = getListElement(commPeer);    //commPeer verweist nun auf das tatsächliche Element in der Liste knownPeers
+						commPeer.setLastPoke(System.currentTimeMillis() / 1000L);
+					}
+					commPeer.setLastPoke(System.currentTimeMillis() / 1000L);
+					commPeer.setClient(this.client);
+					knownPeers.add(commPeer);
 				}
+				
 				else if(test[0].equals("DISCONNECT"))
 				{
-					
+					if(exists(commPeer))
+					{
+						commPeer = getListElement(commPeer);
+						knownPeers.remove(commPeer);
+						peer.disconnect();
+					}
 				}
+				
 				else if(test[0].equals("MESSAGE"))
 				{
-					
+					String message="Nachricht von"+client.getInetAddress().getHostAddress()+":";
+					for(int i=1 ; i< test.length; i++)
+					{
+						message.concat(test[i]);
+					}
+					System.out.println(message);
 				}
 				
 				
@@ -66,10 +89,37 @@ public class ClientHandler extends Thread  {
 		
 	}
 	
-	public synchronized void addToPeers(String name,String ip,int port)
+	public synchronized void addToPeers(PeerListEntry peer)
 	{
-		PeerListEntry temp = new PeerListEntry(name,ip,port);
-		knownPeers.add(temp);
+		
+		knownPeers.add(peer);
+	}
+	
+	public synchronized boolean exists(PeerListEntry peer)
+	{
+		for(int i=0; i<knownPeers.size();i++)
+		{
+		   PeerListEntry index = knownPeers.get(i);
+			if(index.getName() == peer.getName() && index.getIp() == peer.getIp() && index.getPort() == peer.getPort())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public synchronized PeerListEntry getListElement(PeerListEntry peer)
+	{
+		for(int i=0; i<knownPeers.size();i++)
+		{
+		   PeerListEntry index = knownPeers.get(i);
+			if(index.getName() == peer.getName() && index.getIp() == peer.getIp() && index.getPort() == peer.getPort())
+			{
+				return index;
+			}
+		}
+		return null;
+		
 	}
 	
 }

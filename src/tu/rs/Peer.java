@@ -51,6 +51,11 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 			e.printStackTrace();
 		}
 	}
+	
+	public synchronized void disconnect()
+	{
+		
+	}
 
 
 	public String getName() {

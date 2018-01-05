@@ -1,13 +1,19 @@
 package tu.rs;
 
+import java.net.Socket;
+
 public class PeerListEntry {
 	private String name;
 	private String ip;
 	private int port;
 	private long lastPoke;
 	private boolean isActive;;
+	private Socket client;
 	
 	
+
+
+
 	public PeerListEntry(String name,String ip,int port)
 	{
 		this.name = name;
@@ -50,5 +56,15 @@ public class PeerListEntry {
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
+	public Socket getClient() {
+		return client;
+	}
+
+
+
+	public void setClient(Socket client) {
+		this.client = client;
+	}
+
 	
 }
