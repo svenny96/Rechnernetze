@@ -16,15 +16,14 @@ import java.util.Iterator;
 public class ClientHandler extends Thread  {
 
 	private Socket client;
-	private ArrayList<PeerListEntry> knownPeers;
 	private InetAddress addr;
 	private Peer peer;
 	
-	public ClientHandler(Peer peer, Socket socket, ArrayList<PeerListEntry> arr) {
+	public ClientHandler(Peer peer, Socket socket) {
 		
 		this.peer = peer;
 		this.client = socket;
-		this.knownPeers = arr;
+		
 	}
 
 	@Override
@@ -47,22 +46,22 @@ public class ClientHandler extends Thread  {
 				if(test[0].equalsIgnoreCase("POKE"))
 				{
 					
-					if(exists(commPeer))
+					if(peer.exists(commPeer))
 					{
-						commPeer = getListElement(commPeer);    //commPeer verweist nun auf das tatsächliche Element in der Liste knownPeers
+						commPeer = peer.getListElement(commPeer);    //commPeer verweist nun auf das tatsächliche Element in der Liste knownPeers
 						commPeer.setLastPoke(System.currentTimeMillis() / 1000L);
 					}
 					commPeer.setLastPoke(System.currentTimeMillis() / 1000L);
 					commPeer.setClient(this.client);
-					knownPeers.add(commPeer);
+					peer.addPeer(commPeer);
 				}
 				
 				else if(test[0].equals("DISCONNECT"))
 				{
-					if(exists(commPeer))
+					if(peer.exists(commPeer))
 					{
-						commPeer = getListElement(commPeer);
-						knownPeers.remove(commPeer);
+						commPeer = peer.getListElement(commPeer);
+						peer.removePeer(commPeer);
 						peer.disconnect();
 					}
 				}
@@ -89,37 +88,9 @@ public class ClientHandler extends Thread  {
 		
 	}
 	
-	public synchronized void addToPeers(PeerListEntry peer)
-	{
-		
-		knownPeers.add(peer);
-	}
 	
-	public synchronized boolean exists(PeerListEntry peer)
-	{
-		for(int i=0; i<knownPeers.size();i++)
-		{
-		   PeerListEntry index = knownPeers.get(i);
-			if(index.getName() == peer.getName() && index.getIp() == peer.getIp() && index.getPort() == peer.getPort())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
 	
-	public synchronized PeerListEntry getListElement(PeerListEntry peer)
-	{
-		for(int i=0; i<knownPeers.size();i++)
-		{
-		   PeerListEntry index = knownPeers.get(i);
-			if(index.getName() == peer.getName() && index.getIp() == peer.getIp() && index.getPort() == peer.getPort())
-			{
-				return index;
-			}
-		}
-		return null;
-		
-	}
+	
+	
 	
 }
