@@ -55,7 +55,6 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 	public synchronized void disconnect(){
 		for(PeerListEntry peer : knownPeers){
 			messageSingle( peer.getIp(), peer.getPort(), "DISCONNECTED: " + this.name + " " + this.ip + " " + this.port);
-			System.out.println("DISCONNECTED: " + this.name + " " + this.ip + " " + this.port);
 		}
 		knownPeers.clear();
 	}
