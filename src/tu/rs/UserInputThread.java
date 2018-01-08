@@ -23,9 +23,40 @@ public class UserInputThread extends Thread {
 		    String uInput;
 			while((uInput = reader.readLine()) != null)
 			{
-				String[] test = uInput.split(",");
+				String[] test = uInput.split(" ");
 				
-				peer.connect(test[0], Integer.parseInt(test[1]));
+				if( test[0].equalsIgnoreCase("CONNECT")){
+					
+				    peer.connect(test[1], Integer.parseInt(test[2]));
+				    
+				}
+				
+				else if( test[0].equalsIgnoreCase("DISCONNECT")){
+					
+					peer.disconnect();
+					
+				}
+				
+				else if( test[0].equalsIgnoreCase("EXIT")){
+					
+					peer.disconnect();
+					peer.exit();
+					
+				}
+				
+				else if( test[0].equalsIgnoreCase( "M" )){
+					
+					
+				}
+				
+				else if( test[0].equalsIgnoreCase("MX")){
+					
+				}
+				
+				else{
+					System.out.println("Falsche Eingabe");
+				}
+				
 			}
 			
 		} catch (IOException e) {
