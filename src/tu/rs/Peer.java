@@ -59,6 +59,23 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 		knownPeers.clear();
 	}
 	
+	public synchronized void disconnectClient(PeerListEntry entry)
+	{
+		removePeer(entry);
+		try
+		{
+			for(PeerListEntry peer : knownPeers)
+			{
+				PrintWriter out = new PrintWriter(peer.getClient().getOutputStream(),true);
+				out.print("DISCONNECT "+entry.getName()+" "+entry.getIp()+" "+entry.getPort());
+			}
+		}
+		catch(IOException e)
+		{
+			
+		}
+	}
+	
 	public synchronized void exit(){
 		System.exit(0);
 	}

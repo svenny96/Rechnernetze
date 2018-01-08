@@ -52,13 +52,17 @@ public class ClientHandler extends Thread  {
 						commPeer = peer.getListElement(commPeer);    //commPeer verweist nun auf das tatsächliche Element in der Liste knownPeers
 						commPeer.setLastPoke(System.currentTimeMillis() / 1000L);
 					}
-					commPeer.setLastPoke(System.currentTimeMillis() / 1000L);
-					commPeer.setClient(this.client);
-					peer.addPeer(commPeer);
+					else
+					{
+						commPeer.setLastPoke(System.currentTimeMillis() / 1000L);
+						commPeer.setClient(this.client);
+						peer.addPeer(commPeer);
+					}
 				}
 				
 				else if(test[0].equals("DISCONNECT"))
 				{
+					
 					if(peer.exists(commPeer))
 					{
 						commPeer = peer.getListElement(commPeer);
