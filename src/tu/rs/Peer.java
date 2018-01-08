@@ -112,6 +112,52 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 		this.knownPeers = knownPeers;
 	}
 	
+
+	public synchronized void addPeer(PeerListEntry peer)
+	{
+		
+		knownPeers.add(peer);
+	}
+	
+	public synchronized PeerListEntry getListElement(PeerListEntry peer)
+	{
+		for(int i=0; i<knownPeers.size();i++)
+		{
+		   PeerListEntry index = knownPeers.get(i);
+			if(index.getName() == peer.getName() && index.getIp() == peer.getIp() && index.getPort() == peer.getPort())
+			{
+				return index;
+			}
+		}
+		return null;
+		
+	}
+	public synchronized boolean exists(PeerListEntry peer)
+	{
+		for(int i=0; i<knownPeers.size();i++)
+		{
+		   PeerListEntry index = knownPeers.get(i);
+			if(index.getName() == peer.getName() && index.getIp() == peer.getIp() && index.getPort() == peer.getPort())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public synchronized void removePeer(PeerListEntry peer)
+	{
+		for(int i=0; i<knownPeers.size();i++)
+		{
+		   PeerListEntry index = knownPeers.get(i);
+			if(index.getName() == peer.getName() && index.getIp() == peer.getIp() && index.getPort() == peer.getPort())
+			{
+				knownPeers.remove(i);
+			}
+		}
+		
+	}
+	
 	
 	
 
