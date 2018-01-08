@@ -35,6 +35,7 @@ public class ClientHandler extends Thread  {
 			
 			PrintWriter out = new PrintWriter(client.getOutputStream(),true);
 			BufferedReader buff =  new BufferedReader(new InputStreamReader(client.getInputStream()));
+			peer.setIp(client.getRemoteSocketAddress().toString().split(":")[0]);
 			String strInput;
 			
 			while((strInput = buff.readLine()) != null)
