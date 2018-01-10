@@ -44,22 +44,25 @@ public class ClientHandler extends Thread  {
 				String[] test =	strInput.split(" ");
 				PeerListEntry commPeer = new PeerListEntry(test[1],test[2],Integer.parseInt(test[3]));
 				
-				if(test[0].equalsIgnoreCase("POKE"))
+				if(test[1] != peer.getName() || test[2] != peer.getIp() || test[3] !=  ""+peer.getPort())  //Test ob Poke eigene Daten enthält
 				{
+					if(test[0].equalsIgnoreCase("POKE"))
+					{
 					
-					if(peer.exists(commPeer))
-					{
-						commPeer = peer.getListElement(commPeer);    //commPeer verweist nun auf das tatsächliche Element in der Liste knownPeers
-						commPeer.setLastPoke(System.currentTimeMillis() / 1000L);
-					}
-					else
-					{
-						commPeer.setLastPoke(System.currentTimeMillis() / 1000L);
-						
-						peer.addPeer(commPeer);
+						if(peer.exists(commPeer))
+						{
+							commPeer = peer.getListElement(commPeer);    //commPeer verweist nun auf das tatsächliche Element in der Liste knownPeers
+							commPeer.setLastPoke(System.currentTimeMillis() / 1000L);
+						}
+						else
+						{
+							commPeer.setLastPoke(System.currentTimeMillis() / 1000L);						
+							peer.addPeer(commPeer);
+							peer.pokeAll(commPeer);		//Alle bekannten Peers werden über neuen Teilnehmer benachrichtigt
+							peer.poke(commPeer);       	//Poke mit eigenen Daten als Antwort
+						}
 					}
 				}
-				
 				else if(test[0].equals("DISCONNECT"))
 				{
 					
