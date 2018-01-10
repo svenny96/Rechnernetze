@@ -32,15 +32,15 @@ public class ClientHandler extends Thread  {
 		addr = client.getInetAddress();
 		System.out.println("Eingehende Verbindung von:"+ addr.getHostAddress()+":"+client.getPort());
 		try {
+			System.out.println("after try");
 			
-			PrintWriter out = new PrintWriter(client.getOutputStream(),true);
 			BufferedReader buff =  new BufferedReader(new InputStreamReader(client.getInputStream()));
 			
 			String strInput;
 			
-			while((strInput = buff.readLine()) != null)
+			while(buff.ready() && (strInput = buff.readLine()) != null)
 			{
-				
+				System.out.println("strInput");
 				String[] test =	strInput.split(" ");
 				PeerListEntry commPeer = new PeerListEntry(test[1],test[2],Integer.parseInt(test[3]));
 				
@@ -48,7 +48,7 @@ public class ClientHandler extends Thread  {
 				{
 					if(test[0].equalsIgnoreCase("POKE"))
 					{
-					
+					System.out.println("Poke von client");
 						if(peer.exists(commPeer))
 						{
 							commPeer = peer.getListElement(commPeer);    //commPeer verweist nun auf das tatsächliche Element in der Liste knownPeers
@@ -59,7 +59,7 @@ public class ClientHandler extends Thread  {
 							commPeer.setLastPoke(System.currentTimeMillis() / 1000L);						
 							peer.addPeer(commPeer);
 							peer.pokeAll(commPeer);		//Alle bekannten Peers werden über neuen Teilnehmer benachrichtigt
-							peer.poke(commPeer);       	//Poke mit eigenen Daten als Antwort
+							peer.poke(commPeer.getIp(),commPeer.getPort());       	//Poke mit eigenen Daten als Antwort
 						}
 					}
 				}
@@ -89,7 +89,7 @@ public class ClientHandler extends Thread  {
 			
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println("End of Stream");
 			e.printStackTrace();
 		}
 		

@@ -1,6 +1,8 @@
 package tu.rs;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -14,7 +16,7 @@ private String name;
 private String ip;
 private int port;
 private ServerSocket sSocket;
-private Socket socket;
+
 private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 
 
@@ -43,15 +45,7 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 		
 	}
 	
-	public void connect(String ip,int port)
-	{
-		try {
-			socket.connect(new InetSocketAddress(ip,port));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
 	
 	public synchronized void disconnect(){
 		for(PeerListEntry peer : knownPeers){
@@ -171,14 +165,17 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 		
 	}
 	
-	public void poke(PeerListEntry entry)							//Poke Nachricht mit eigenen Daten an einzelnen Client schicken
+	public void poke(String ip,int port)							//Poke Nachricht mit eigenen Daten an einzelnen Client schicken
 	{
 		try {
-			socket = new Socket();
-			socket.connect(new InetSocketAddress(entry.getIp(),entry.getPort()));
-			PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
-			out.write("POKE "+this.getName()+" "+this.getIp()+" "+this.getPort());
-			socket.close();
+			Socket pokeSocket = new Socket(ip,port);
+			
+		
+			PrintWriter out = new PrintWriter(pokeSocket.getOutputStream(),true);
+			
+			out.println("POKE "+this.getName()+" "+this.getIp()+" "+this.getPort());
+			
+			
 			
 		} catch (IOException e) {
 			System.out.println("Senden fehlgeschlagen");
@@ -191,10 +188,11 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 		 try{
 			 for(PeerListEntry entry  : knownPeers)
 			 {
-				socket = new Socket(); 															//Socket muss neu initialisiert werden da ein close Aufruf die weiter Nutzung verhindert
+				Socket socket = new Socket(); 															//Socket muss neu initialisiert werden da ein close Aufruf die weiter Nutzung verhindert
 				socket.connect(new InetSocketAddress(entry.getIp(),entry.getPort()));
 				PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
 				out.write("POKE "+unknown.getName()+" "+unknown.getIp()+" "+unknown.getPort());
+				
 				socket.close();
 			 }
 		 }
