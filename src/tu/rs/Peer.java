@@ -14,7 +14,7 @@ private String name;
 private String ip;
 private int port;
 private ServerSocket sSocket;
-private Socket socket = new Socket();
+private Socket socket;
 private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 
 
@@ -28,6 +28,7 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 		
 		try {
 			sSocket = new ServerSocket(port);
+			this.ip = sSocket.getInetAddress().getHostAddress();
 			ServerThread sThread = new ServerThread(sSocket,this);
 			sThread.start();
 			UserInputThread uiThread = new UserInputThread(this);
@@ -62,18 +63,14 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 	public synchronized void disconnectClient(PeerListEntry entry)
 	{
 		removePeer(entry);
-		try
-		{
+		
+		
 			for(PeerListEntry peer : knownPeers)
 			{
-				PrintWriter out = new PrintWriter(peer.getClient().getOutputStream(),true);
-				out.print("DISCONNECT "+entry.getName()+" "+entry.getIp()+" "+entry.getPort());
+				
 			}
-		}
-		catch(IOException e)
-		{
-			
-		}
+	
+		
 	}
 	
 	public synchronized void exit(){
@@ -174,6 +171,38 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 		
 	}
 	
+	public void poke(PeerListEntry entry)							//Poke Nachricht mit eigenen Daten an einzelnen Client schicken
+	{
+		try {
+			socket = new Socket();
+			socket.connect(new InetSocketAddress(entry.getIp(),entry.getPort()));
+			PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
+			out.write("POKE "+this.getName()+" "+this.getIp()+" "+this.getPort());
+			socket.close();
+			
+		} catch (IOException e) {
+			System.out.println("Senden fehlgeschlagen");
+			e.printStackTrace();
+		}
+		
+	}
+	 public void pokeAll(PeerListEntry unknown) 						//Weiterleitung der Poke Nachricht bei bisher unbekanntem Sender
+	 {
+		 try{
+			 for(PeerListEntry entry  : knownPeers)
+			 {
+				socket = new Socket(); 															//Socket muss neu initialisiert werden da ein close Aufruf die weiter Nutzung verhindert
+				socket.connect(new InetSocketAddress(entry.getIp(),entry.getPort()));
+				PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
+				out.write("POKE "+unknown.getName()+" "+unknown.getIp()+" "+unknown.getPort());
+				socket.close();
+			 }
+		 }
+		 catch (IOException e) {
+				System.out.println("Übertragungsfehler");
+				e.printStackTrace();
+			}
+	 }
 	
 	
 

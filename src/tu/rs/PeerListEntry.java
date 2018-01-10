@@ -7,8 +7,7 @@ public class PeerListEntry {
 	private String ip;
 	private int port;
 	private long lastPoke;
-	private boolean isActive;;
-	private Socket client;
+	
 	
 	
 
@@ -19,7 +18,7 @@ public class PeerListEntry {
 		this.name = name;
 		this.ip = ip;
 		this.port = port;
-		this.isActive = true;
+		
 		this.lastPoke = System.currentTimeMillis() / 1000L; //UnixTime
 	
 	}
@@ -50,21 +49,8 @@ public class PeerListEntry {
 	public void setLastPoke(long lastPoke) {
 		this.lastPoke = lastPoke;
 	}
-	public boolean isActive() {
-		return isActive;
-	}
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
-	}
-	public Socket getClient() {
-		return client;
-	}
-
-
-
-	public void setClient(Socket client) {
-		this.client = client;
-	}
-
 	
+
+
+
 }
