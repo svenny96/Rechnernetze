@@ -8,6 +8,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Peer {
 
@@ -17,7 +18,7 @@ private String ip;
 private int port;
 private ServerSocket sSocket;
 
-private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
+private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayList<PeerListEntry>();
 
 
 	public Peer(String name,int port)
@@ -30,7 +31,8 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 		
 		try {
 			sSocket = new ServerSocket(port);
-			this.ip = sSocket.getInetAddress().getHostAddress();
+			this.ip = sSocket.getInetAddress().getLocalHost().getHostAddress();
+			System.out.println(this.name+"/"+this.ip+"/"+this.port);
 			ServerThread sThread = new ServerThread(sSocket,this);
 			sThread.start();
 			UserInputThread uiThread = new UserInputThread(this);
@@ -110,12 +112,12 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 	}
 
 
-	public synchronized ArrayList<PeerListEntry> getKnownPeers() {
+	public synchronized CopyOnWriteArrayList<PeerListEntry> getKnownPeers() {
 		return knownPeers;
 	}
 
 
-	public void setKnownPeers(ArrayList<PeerListEntry> knownPeers) {
+	public void setKnownPeers(CopyOnWriteArrayList<PeerListEntry> knownPeers) {
 		this.knownPeers = knownPeers;
 	}
 	
@@ -126,31 +128,8 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 		knownPeers.add(peer);
 	}
 	
-	public synchronized PeerListEntry getListElement(PeerListEntry peer)
-	{
-		for(int i=0; i<knownPeers.size();i++)
-		{
-		   PeerListEntry index = knownPeers.get(i);
-			if(index.getName() == peer.getName() && index.getIp() == peer.getIp() && index.getPort() == peer.getPort())
-			{
-				return index;
-			}
-		}
-		return null;
-		
-	}
-	public synchronized boolean exists(PeerListEntry peer)
-	{
-		for(int i=0; i<knownPeers.size();i++)
-		{
-		   PeerListEntry index = knownPeers.get(i);
-			if(index.getName() == peer.getName() && index.getIp() == peer.getIp() && index.getPort() == peer.getPort())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+
+	
 	
 	public synchronized void removePeer(PeerListEntry peer)
 	{
@@ -183,7 +162,7 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 		}
 		
 	}
-	 public void pokeAll(PeerListEntry unknown) 						//Weiterleitung der Poke Nachricht bei bisher unbekanntem Sender
+	 public synchronized void  pokeAll(PeerListEntry unknown) 						//Weiterleitung der Poke Nachricht bei bisher unbekanntem Sender
 	 {
 		 try{
 			 for(PeerListEntry entry  : knownPeers)
@@ -191,7 +170,7 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 				Socket socket = new Socket(); 															//Socket muss neu initialisiert werden da ein close Aufruf die weiter Nutzung verhindert
 				socket.connect(new InetSocketAddress(entry.getIp(),entry.getPort()));
 				PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
-				out.write("POKE "+unknown.getName()+" "+unknown.getIp()+" "+unknown.getPort());
+				out.println("POKE "+unknown.getName()+" "+unknown.getIp()+" "+unknown.getPort());
 				
 				socket.close();
 			 }
@@ -200,6 +179,13 @@ private ArrayList<PeerListEntry> knownPeers = new ArrayList<PeerListEntry>();
 				System.out.println("Übertragungsfehler");
 				e.printStackTrace();
 			}
+	 }
+	 public void printPeers()
+	 {
+		 for(PeerListEntry entry : knownPeers)
+		 {
+			 System.out.println("Liste:"+entry.getName()+" "+entry.getIp()+" "+entry.getPort());
+		 }
 	 }
 	
 	
