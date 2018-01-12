@@ -24,7 +24,7 @@ public class ServerThread extends Thread {
 			while(true)
 			{
 				Socket client = server.accept();
-				System.out.println(client.getInetAddress());
+				//System.out.println(client.getInetAddress());
 				ClientHandler cHandler = new ClientHandler(peer,client);
 				cHandler.start();
 			}

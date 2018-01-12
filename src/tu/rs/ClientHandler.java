@@ -44,9 +44,9 @@ public class ClientHandler extends Thread  {
 				System.out.println(strInput);
 				String[] test =	strInput.split(" ");
 				PeerListEntry commPeer = null;
-				System.out.println(test[1]+" "+test[2]+" "+test[3]);
+				//System.out.println(test[1]+" "+test[2]+" "+test[3]);
 				
-				if(test[1] != peer.getName() || test[2] != peer.getIp() || test[3] !=  ""+peer.getPort())  //Test ob Poke eigene Daten enthält
+				if( !test[2].equals(peer.getIp()) || !(Integer.parseInt(test[3])  == peer.getPort()))  //Test ob Poke eigene Daten enthält
 				{
 					if(test[0].equalsIgnoreCase("POKE"))
 					{
@@ -57,21 +57,22 @@ public class ClientHandler extends Thread  {
 						
 						if(exists(commPeer))
 						{
-							System.out.println("exists");
+							//System.out.println("exists");
 							commPeer = getListElement(commPeer);    //commPeer verweist nun auf das tatsächliche Element in der Liste knownPeers
 							commPeer.setLastPoke(System.currentTimeMillis() / 1000L);
 						}
 						else
 						{
-							System.out.println("not exists");
+							//System.out.println("not exists");
 							
 							
 							
 							peer.addPeer(commPeer);
-							peer.printPeers();
+							peer.poke(commPeer.getIp(),commPeer.getPort());
 							peer.pokeAll(commPeer);		//Alle bekannten Peers werden über neuen Teilnehmer benachrichtigt
-							peer.poke(commPeer.getIp(),commPeer.getPort());       	//Poke mit eigenen Daten als Antwort
+							       	//Poke mit eigenen Daten als Antwort
 						}
+						
 					}
 				}
 				else if(test[0].equals("DISCONNECT"))
@@ -113,7 +114,7 @@ public class ClientHandler extends Thread  {
 		for(PeerListEntry compare : peer.getKnownPeers())
 		{
 			
-			System.out.println("Vergleiche:"+entry.getIp()+"/"+compare.getIp()+","+entry.getPort()+"/"+compare.getPort());
+			//System.out.println("Vergleiche:"+entry.getIp()+"/"+compare.getIp()+","+entry.getPort()+"/"+compare.getPort());
 		   
 			if( compare.getIp().equals(entry.getIp()) && compare.getPort() == entry.getPort())
 			{
@@ -128,7 +129,7 @@ public class ClientHandler extends Thread  {
 		for(int i=0; i<peer.getKnownPeers().size();i++)
 		{
 		   PeerListEntry index = peer.getKnownPeers().get(i);
-			if(index.getIp().equals(peer.getIp())   && index.getPort() == peer.getPort())
+			if(index.getIp().equals(entry.getIp())   && index.getPort() == entry.getPort())
 			{
 				return index;
 			}
