@@ -46,7 +46,7 @@ public class ClientHandler extends Thread  {
 				PeerListEntry commPeer = null;
 				//System.out.println(test[1]+" "+test[2]+" "+test[3]);
 				
-				if( !test[2].equals(peer.getIp()) || !(Integer.parseInt(test[3])  == peer.getPort()))  //Test ob Poke eigene Daten enthält
+				if( test.length >= 3 && (!test[2].equals(peer.getIp()) || !(Integer.parseInt(test[3])  == peer.getPort())))  //Test ob Poke eigene Daten enthält
 				{
 					if(test[0].equalsIgnoreCase("POKE"))
 					{
@@ -88,12 +88,11 @@ public class ClientHandler extends Thread  {
 				
 				else if(test[0].equals("MESSAGE"))
 				{
-					String message="Nachricht von"+client.getInetAddress().getHostAddress()+":";
-					for(int i=1 ; i< test.length; i++)
-					{
-						message.concat(test[i]);
+					System.out.print("Nachricht von "+ test[1] + ":");
+					for(int i = 4; i < test.length; i++){
+						System.out.print(" "+test[i]);
 					}
-					System.out.println(message);
+					System.out.println();
 				}
 				
 				

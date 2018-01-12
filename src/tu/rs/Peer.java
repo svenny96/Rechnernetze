@@ -73,12 +73,41 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 		System.exit(0);
 	}
 	
-	public synchronized void messageMulti(String name, String text){
+	public synchronized void messageMulti(String[] args){
 		
+		String[] messageArray = new String[args.length - 2];
+		
+		
+		for(int i = 2; i < args.length; i++){
+			messageArray[i-2] = args[i];
+		}
+		
+		String message = String.join(" ", messageArray);
+		
+		for(PeerListEntry peer : knownPeers){
+			
+			if(peer.getName().equals(args[1])){
+				messageSingle( peer.getIp(), peer.getPort(), message);
+			}
+		}
 	}
 	
 	public synchronized void messageSingle(String ip, int port, String text){
 		
+		try {
+			Socket messageSocket = new Socket(ip,port);
+			
+		
+			PrintWriter out = new PrintWriter(messageSocket.getOutputStream(),true);
+			
+			out.println("MESSAGE "+name+" "+ip+" "+port+" "+text);
+			
+			
+			
+		} catch (IOException e) {
+			System.out.println("Senden fehlgeschlagen");
+			e.printStackTrace();
+		}
 	}
 
 

@@ -25,7 +25,7 @@ public class UserInputThread extends Thread {
 			{
 				String[] test = uInput.split(" ");
 					
-				if( test[0].equalsIgnoreCase("CONNECT")){
+				if(test.length == 3 && test[0].equalsIgnoreCase("CONNECT")){
 					
 				    peer.poke(test[1],Integer.parseInt(test[2]));
 				    
@@ -44,13 +44,22 @@ public class UserInputThread extends Thread {
 					
 				}
 				
-				else if( test[0].equalsIgnoreCase( "M" )){
+				else if(test.length >= 3 && test[0].equalsIgnoreCase( "M" )){
 					
-					
+					peer.messageMulti( test );
 				}
 				
-				else if( test[0].equalsIgnoreCase("MX")){
+				else if(test.length >= 4 && test[0].equalsIgnoreCase("MX")){
 					
+					String[] messageArray = new String[test.length - 2];
+					
+					
+					for(int i = 2; i < test.length; i++){
+						messageArray[i-2] = test[i];
+					}
+					
+					String message = String.join(" ", messageArray);
+					peer.messageSingle(test[1], Integer.parseInt(test[2]),message);
 				}
 				
 				else{
