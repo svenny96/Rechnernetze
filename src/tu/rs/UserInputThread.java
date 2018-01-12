@@ -54,6 +54,7 @@ public class UserInputThread extends Thread {
 				}
 				
 				else{
+					peer.printPeers();
 					System.out.println("Falsche Eingabe");
 				}
 				
