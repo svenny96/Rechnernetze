@@ -19,6 +19,7 @@ public class ClientHandler extends Thread  {
 	private InetAddress addr;
 	private Peer peer;
 	
+	
 	public ClientHandler(Peer peer, Socket socket) {
 		
 		this.peer = peer;
@@ -30,45 +31,55 @@ public class ClientHandler extends Thread  {
 	public void run()
 	{
 		addr = client.getInetAddress();
-		System.out.println("Eingehende Verbindung von:"+ addr.getHostAddress()+":"+client.getPort());
+		
 		try {
 			
-			PrintWriter out = new PrintWriter(client.getOutputStream(),true);
+			
 			BufferedReader buff =  new BufferedReader(new InputStreamReader(client.getInputStream()));
 			
 			String strInput;
 			
-			while((strInput = buff.readLine()) != null)
+			while(buff.ready() && (strInput = buff.readLine()) != null)
 			{
-				
+				System.out.println(strInput);
 				String[] test =	strInput.split(" ");
-				PeerListEntry commPeer = new PeerListEntry(test[1],test[2],Integer.parseInt(test[3]));
+				PeerListEntry commPeer = null;
+				System.out.println(test[1]+" "+test[2]+" "+test[3]);
 				
 				if(test[1] != peer.getName() || test[2] != peer.getIp() || test[3] !=  ""+peer.getPort())  //Test ob Poke eigene Daten enthält
 				{
 					if(test[0].equalsIgnoreCase("POKE"))
 					{
-					
-						if(peer.exists(commPeer))
+						
+						
+						commPeer = new PeerListEntry(test[1],test[2],Integer.parseInt(test[3]));
+						
+						
+						if(exists(commPeer))
 						{
-							commPeer = peer.getListElement(commPeer);    //commPeer verweist nun auf das tatsächliche Element in der Liste knownPeers
+							System.out.println("exists");
+							commPeer = getListElement(commPeer);    //commPeer verweist nun auf das tatsächliche Element in der Liste knownPeers
 							commPeer.setLastPoke(System.currentTimeMillis() / 1000L);
 						}
 						else
 						{
-							commPeer.setLastPoke(System.currentTimeMillis() / 1000L);						
+							System.out.println("not exists");
+							
+							
+							
 							peer.addPeer(commPeer);
+							peer.printPeers();
 							peer.pokeAll(commPeer);		//Alle bekannten Peers werden über neuen Teilnehmer benachrichtigt
-							peer.poke(commPeer);       	//Poke mit eigenen Daten als Antwort
+							peer.poke(commPeer.getIp(),commPeer.getPort());       	//Poke mit eigenen Daten als Antwort
 						}
 					}
 				}
 				else if(test[0].equals("DISCONNECT"))
 				{
 					
-					if(peer.exists(commPeer))
+					if(exists(commPeer))
 					{
-						commPeer = peer.getListElement(commPeer);
+						commPeer = getListElement(commPeer);
 						peer.removePeer(commPeer);
 						peer.disconnect();
 					}
@@ -89,7 +100,7 @@ public class ClientHandler extends Thread  {
 			
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println("End of Stream");
 			e.printStackTrace();
 		}
 		
@@ -97,7 +108,34 @@ public class ClientHandler extends Thread  {
 	}
 	
 	
+	public boolean exists(PeerListEntry entry)
+	{
+		for(PeerListEntry compare : peer.getKnownPeers())
+		{
+			
+			System.out.println("Vergleiche:"+entry.getIp()+"/"+compare.getIp()+","+entry.getPort()+"/"+compare.getPort());
+		   
+			if( compare.getIp().equals(entry.getIp()) && compare.getPort() == entry.getPort())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 	
+	public synchronized PeerListEntry getListElement(PeerListEntry entry)
+	{
+		for(int i=0; i<peer.getKnownPeers().size();i++)
+		{
+		   PeerListEntry index = peer.getKnownPeers().get(i);
+			if(index.getIp().equals(peer.getIp())   && index.getPort() == peer.getPort())
+			{
+				return index;
+			}
+		}
+		return null;
+		
+	}
 	
 	
 	

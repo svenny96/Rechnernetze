@@ -27,7 +27,7 @@ public class UserInputThread extends Thread {
 					
 				if( test[0].equalsIgnoreCase("CONNECT")){
 					
-				    peer.connect(test[1], Integer.parseInt(test[2]));
+				    peer.poke(test[1],Integer.parseInt(test[2]));
 				    
 				}
 				
