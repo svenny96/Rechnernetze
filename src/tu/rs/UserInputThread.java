@@ -24,7 +24,7 @@ public class UserInputThread extends Thread {
 			while((uInput = reader.readLine()) != null)
 			{
 				String[] test = uInput.split(" ");
-				
+					
 				if( test[0].equalsIgnoreCase("CONNECT")){
 					
 				    peer.connect(test[1], Integer.parseInt(test[2]));

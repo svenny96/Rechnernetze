@@ -27,7 +27,7 @@ public class ServerThread extends Thread {
 				System.out.println(client.getInetAddress());
 				ClientHandler cHandler = new ClientHandler(peer,client);
 				cHandler.start();
-			}	
+			}
 			
 			
 		} catch (IOException e) {
