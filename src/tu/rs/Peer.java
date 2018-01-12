@@ -9,6 +9,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Peer {
 
@@ -37,6 +40,9 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 			sThread.start();
 			UserInputThread uiThread = new UserInputThread(this);
 			uiThread.start();
+			PeerTimer peerTimer = new PeerTimer(this);
+			  final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+			  executorService.scheduleAtFixedRate(peerTimer, 0, 30, TimeUnit.SECONDS);
 			
 			
 		} catch (IOException e) {
@@ -56,18 +62,7 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 		knownPeers.clear();
 	}
 	
-	public synchronized void disconnectClient(PeerListEntry entry)
-	{
-		removePeer(entry);
-		
-		
-			for(PeerListEntry peer : knownPeers)
-			{
-				
-			}
 	
-		
-	}
 	
 	public synchronized void exit(){
 		System.exit(0);
@@ -213,7 +208,7 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 	 {
 		 for(PeerListEntry entry : knownPeers)
 		 {
-			 System.out.println("Liste:"+entry.getName()+" "+entry.getIp()+" "+entry.getPort());
+			 System.out.println("Liste:"+entry.getName()+" "+entry.getIp()+" "+entry.getPort()+" "+entry.getLastPoke());
 		 }
 	 }
 	
