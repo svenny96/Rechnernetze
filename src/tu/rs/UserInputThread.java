@@ -52,11 +52,11 @@ public class UserInputThread extends Thread {
 				
 				else if(test.length >= 4 && test[0].equalsIgnoreCase("MX")){
 					
-					String[] messageArray = new String[test.length - 2];
+					String[] messageArray = new String[test.length - 3];
 					
 					
-					for(int i = 2; i < test.length; i++){
-						messageArray[i-2] = test[i];
+					for(int i = 3; i < test.length; i++){
+						messageArray[i-3] = test[i];
 					}
 					
 					String message = String.join(" ", messageArray);

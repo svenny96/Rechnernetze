@@ -77,7 +77,7 @@ public class ClientHandler extends Thread  {
 				}
 				else if(test[0].equals("DISCONNECT"))
 				{
-					System.out.println("disonnect");
+					System.out.println("disonnect"); //kontrollausgabe
 					commPeer = new PeerListEntry(test[1],test[2],Integer.parseInt(test[3]));
 					
 					if(exists(commPeer))
