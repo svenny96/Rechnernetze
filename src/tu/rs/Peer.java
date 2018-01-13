@@ -42,7 +42,7 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 			uiThread.start();
 			PeerTimer peerTimer = new PeerTimer(this);
 			  final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-			  executorService.scheduleAtFixedRate(peerTimer, 0, 30, TimeUnit.SECONDS);
+			  executorService.scheduleAtFixedRate(peerTimer, 30, 30, TimeUnit.SECONDS);
 			
 			
 		} catch (IOException e) {

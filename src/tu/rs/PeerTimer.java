@@ -21,7 +21,7 @@ public class PeerTimer implements Runnable{
 		peer.pokeAll(new PeerListEntry(peer.getName(),peer.getIp(),peer.getPort()));
 		for(PeerListEntry entry : peer.getKnownPeers())
 		{
-			if(Math.abs(currentTime - entry.getLastPoke()) >= 10  )
+			if(Math.abs(currentTime - entry.getLastPoke()) >= 60  )
 			{
 				peer.getKnownPeers().remove(entry);
 			}
