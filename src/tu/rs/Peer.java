@@ -110,20 +110,31 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 	
 	public synchronized void messageSingle(String ip, int port, String text){
 		
-		try {
-			Socket messageSocket = new Socket(ip,port);
-			
-		
-			PrintWriter out = new PrintWriter(messageSocket.getOutputStream(),true);
-			
-			out.println("MESSAGE "+name+" "+ip+" "+port+" "+text);
-			
-			
-			
-		} catch (IOException e) {
-			System.out.println("Senden fehlgeschlagen");
-			e.printStackTrace();
+		boolean valid = false;
+		for(PeerListEntry compare : knownPeers){
+			valid = valid | ( compare.getIp().equals(ip) & compare.getPort() == port );
 		}
+		if(valid){
+			
+		    try {
+			    Socket messageSocket = new Socket(ip,port);
+			 
+		 
+		 	    PrintWriter out = new PrintWriter(messageSocket.getOutputStream(),true);
+		 	
+			    out.println("MESSAGE "+name+" "+ip+" "+port+" "+text);
+			
+			    messageSocket.close();
+			
+		    } catch (IOException e) {
+			    System.out.println("Senden fehlgeschlagen");
+			    e.printStackTrace();
+		    }
+		    
+		} else{
+			System.out.println("Unbekannter Empfänger, Nachricht nicht versendet");
+		}
+		
 	}
 
 
@@ -199,7 +210,7 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 			
 			out.println("POKE "+this.getName()+" "+this.getIp()+" "+this.getPort());
 			
-			
+			pokeSocket.close();
 			
 		} catch (IOException e) {
 			System.out.println("Verbindung zur angegebenen Adresse konnte nicht hergestellt werden");
