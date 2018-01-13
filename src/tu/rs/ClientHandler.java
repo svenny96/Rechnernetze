@@ -41,17 +41,17 @@ public class ClientHandler extends Thread  {
 			
 			while(buff.ready() && (strInput = buff.readLine()) != null)
 			{
-				System.out.println(strInput);
+				//System.out.println(strInput);
 				String[] test =	strInput.split(" ");
 				PeerListEntry commPeer = null;
 				//System.out.println(test[1]+" "+test[2]+" "+test[3]);
 				
-				if( test.length >= 3 && (!test[2].equals(peer.getIp()) || !(Integer.parseInt(test[3])  == peer.getPort())))  //Test ob Poke eigene Daten enthält
-				{
+				
 					if(test[0].equalsIgnoreCase("POKE"))
 					{
 						
-						
+						if( test.length >= 3 && (!test[2].equals(peer.getIp()) || !(Integer.parseInt(test[3])  == peer.getPort())))  //Test ob Poke eigene Daten enthält
+						{
 						commPeer = new PeerListEntry(test[1],test[2],Integer.parseInt(test[3]));
 						
 						
@@ -77,13 +77,17 @@ public class ClientHandler extends Thread  {
 				}
 				else if(test[0].equals("DISCONNECT"))
 				{
+					System.out.println("disonnect");
+					commPeer = new PeerListEntry(test[1],test[2],Integer.parseInt(test[3]));
 					
 					if(exists(commPeer))
 					{
+						
 						commPeer = getListElement(commPeer);
-						peer.removePeer(commPeer);
-						peer.disconnect();
+						peer.getKnownPeers().remove(commPeer);
+						peer.disconnect(test[1],test[2],Integer.parseInt(test[3]));
 					}
+					
 				}
 				
 				else if(test[0].equals("MESSAGE"))

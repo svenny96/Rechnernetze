@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
@@ -41,8 +42,8 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 			UserInputThread uiThread = new UserInputThread(this);
 			uiThread.start();
 			PeerTimer peerTimer = new PeerTimer(this);
-			  final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-			  executorService.scheduleAtFixedRate(peerTimer, 30, 30, TimeUnit.SECONDS);
+			final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+			executorService.scheduleAtFixedRate(peerTimer, 30, 30, TimeUnit.SECONDS);
 			
 			
 		} catch (IOException e) {
@@ -55,16 +56,36 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 	
 	
 	
-	public synchronized void disconnect(){
+	public synchronized void disconnect(String name,String ip,int port){
+		Socket disconnectSocket = null;
+		PrintWriter out  = null;
+		
 		for(PeerListEntry peer : knownPeers){
-			messageSingle( peer.getIp(), peer.getPort(), "DISCONNECTED: " + this.name + " " + this.ip + " " + this.port);
+			try {
+				disconnectSocket = new Socket(peer.getIp(),peer.getPort());
+				out = new PrintWriter(disconnectSocket.getOutputStream(),true);
+				out.println("DISCONNECT "+name+" "+ip+" "+port);
+				disconnectSocket.close();
+			} catch (UnknownHostException e) {
+				System.out.println("Host Adresse konnte nicht aufgelöst werden");
+			} catch (IOException e) {
+				System.out.println("Client "+peer.getName()+" "+"nicht erreichbar");
+			}
 		}
-		knownPeers.clear();
+		
+		
+		
 	}
 	
 	
 	
 	public synchronized void exit(){
+		try {
+			sSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.exit(0);
 	}
 	
@@ -181,8 +202,8 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 			
 			
 		} catch (IOException e) {
-			System.out.println("Senden fehlgeschlagen");
-			e.printStackTrace();
+			System.out.println("Verbindung zur angegebenen Adresse konnte nicht hergestellt werden");
+			
 		}
 		
 	}

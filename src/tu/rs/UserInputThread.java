@@ -33,13 +33,14 @@ public class UserInputThread extends Thread {
 				
 				else if( test[0].equalsIgnoreCase("DISCONNECT")){
 					
-					peer.disconnect();
+					peer.disconnect(peer.getName(),peer.getIp(),peer.getPort());
+					peer.getKnownPeers().clear();
 					
 				}
 				
 				else if( test[0].equalsIgnoreCase("EXIT")){
 					
-					peer.disconnect();
+					peer.disconnect(peer.getName(),peer.getIp(),peer.getPort());
 					peer.exit();
 					
 				}
