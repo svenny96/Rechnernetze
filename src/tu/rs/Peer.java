@@ -78,7 +78,8 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 	
 	
 	
-	public synchronized void exit(){
+	public synchronized void exit()  //Der Client schließt seinen Socket und beendet sich
+		{
 		try {
 			sSocket.close();
 		} catch (IOException e) {
@@ -88,18 +89,20 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 		System.exit(0);
 	}
 	
-	public synchronized void messageMulti(String[] args){
+	public synchronized void messageMulti(String[] args)         //An jeden bekannten Client mit angegebenem Namen wird die Nachricht gesendet
+	{               
 		
-		String[] messageArray = new String[args.length - 2];
+		String[] messageArray = new String[args.length - 2];     //Hilfsarray in das der Text der nachricht geschrieben wird
 		
 		
 		for(int i = 2; i < args.length; i++){
 			messageArray[i-2] = args[i];
 		}
 		
-		String message = String.join(" ", messageArray);
+		String message = String.join(" ", messageArray);          //Nachrichtentext wird zu einem einzigen String verbunden
 		
-		for(PeerListEntry peer : knownPeers){
+		for(PeerListEntry peer : knownPeers)                      //Bekannte Clients werden nach passendem Namen durchsucht und bei Übereinstimmung die Nachricht gesendet
+		{                     
 			
 			if(peer.getName().equals(args[1])){
 				messageSingle( peer.getIp(), peer.getPort(), message);
@@ -107,11 +110,13 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 		}
 	}
 	
-	public synchronized void messageSingle(String ip, int port, String text){
+	public synchronized void messageSingle(String ip, int port, String text)       //Sendet eine Nachricht an den bekannten Client mit angegebenen IP und Port
+	{
 		
 		boolean valid = false;
-		for(PeerListEntry compare : knownPeers){
-			valid = valid | ( compare.getIp().equals(ip) & compare.getPort() == port );
+		for(PeerListEntry compare : knownPeers)          //Prüft ob der Empfänger bekannt ist
+		{
+			valid = valid | ( compare.getIp().equals(ip) && compare.getPort() == port );
 		}
 		if(valid){
 			
@@ -186,7 +191,7 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 
 	
 	
-	public synchronized void removePeer(PeerListEntry peer)
+	public synchronized void removePeer(PeerListEntry peer)         //Entfernt den angegebenen Client aus der Liste der bekannten Clients
 	{
 		for(int i=0; i<knownPeers.size();i++)
 		{
