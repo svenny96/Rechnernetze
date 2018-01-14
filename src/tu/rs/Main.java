@@ -20,7 +20,7 @@ public class Main {
 			if(args.length == 2 && ( Integer.parseInt(args[1]) < 1025 || Integer.parseInt(args[1]) > 65535))					//Überprüfung ob der angegebene Port innerhalb der 
 			{																													//gestatteten Grenze liegt
 			
-				System.out.println("Bitte wählen Sie eine Zahl zwischen 1024 und 49151 an.");
+				System.out.println("Bitte wählen Sie eine Zahl zwischen 1025 und 65535 an.");
 			
 			
 			}
