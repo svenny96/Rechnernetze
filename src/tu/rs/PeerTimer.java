@@ -18,7 +18,7 @@ public class PeerTimer implements Runnable{
 	public void run()
 	{
 		long currentTime  = System.currentTimeMillis() / 1000L;
-		peer.pokeAll(new PeerListEntry(peer.getName(),peer.getIp(),peer.getPort()));				//Bekannte Peers werden über eiegene Existenz informiert
+		peer.pokeAll(new PeerListEntry(peer.getName(),peer.getIp(),peer.getPort()));				//Bekannte Peers werden über eigene Existenz informiert
 		for(PeerListEntry entry : peer.getKnownPeers())
 		{
 			if(Math.abs(currentTime - entry.getLastPoke()) >= 60  )									//Alle bekannten Peers, dessen Poke Zeitpunkt länger als eine Minute
