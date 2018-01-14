@@ -35,20 +35,19 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 		
 		try {
 			sSocket = new ServerSocket(port);
-			this.ip = sSocket.getInetAddress().getLocalHost().getHostAddress();
+			this.ip = sSocket.getInetAddress().getLocalHost().getHostAddress();											
 			System.out.println(this.name+"/"+this.ip+"/"+this.port);
-			ServerThread sThread = new ServerThread(sSocket,this);
-			sThread.start();
-			UserInputThread uiThread = new UserInputThread(this);
+			ServerThread sThread = new ServerThread(sSocket,this);														//Server Thread gestartet um auf eingehende Verbindungen zu warten
+			sThread.start();																							
+			UserInputThread uiThread = new UserInputThread(this);														//UserInputThread zur Konsoleneingabe gestartet
 			uiThread.start();
 			PeerTimer peerTimer = new PeerTimer(this);
-			final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-			executorService.scheduleAtFixedRate(peerTimer, 30, 30, TimeUnit.SECONDS);
+			final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();				//30 Sekunden nach Programmstart wird alle 30 Sekunden die run-Methode 
+			executorService.scheduleAtFixedRate(peerTimer, 30, 30, TimeUnit.SECONDS);									//der PeerTimer Klasse ausgeführt.
 			
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Fehler bei Initialisierung");
 		}
 		
 		
@@ -56,8 +55,8 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 	
 	
 	
-	public synchronized void disconnect(String name,String ip,int port){
-		Socket disconnectSocket = null;
+	public synchronized void disconnect(String name,String ip,int port){				//Für den angegebenen Client wird eine disconnect Nachricht verschickt.
+		Socket disconnectSocket = null;												
 		PrintWriter out  = null;
 		
 		for(PeerListEntry peer : knownPeers){
@@ -223,7 +222,7 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 		 try{
 			 for(PeerListEntry entry  : knownPeers)
 			 {
-				Socket socket = new Socket(); 															//Socket muss neu initialisiert werden da ein close Aufruf die weiter Nutzung verhindert
+				Socket socket = new Socket(); 														
 				socket.connect(new InetSocketAddress(entry.getIp(),entry.getPort()));
 				PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
 				out.println("POKE "+unknown.getName()+" "+unknown.getIp()+" "+unknown.getPort());
@@ -233,10 +232,10 @@ private CopyOnWriteArrayList<PeerListEntry> knownPeers = new CopyOnWriteArrayLis
 		 }
 		 catch (IOException e) {
 				System.out.println("Übertragungsfehler");
-				e.printStackTrace();
+				
 			}
 	 }
-	 public void printPeers()
+	 public void printPeers()																		//Ausgeben der Liste bisher bekannter Peers
 	 {
 		 for(PeerListEntry entry : knownPeers)
 		 {

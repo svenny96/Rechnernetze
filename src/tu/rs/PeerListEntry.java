@@ -1,6 +1,6 @@
 package tu.rs;
 
-import java.net.Socket;
+
 
 public class PeerListEntry {
 	private String name;

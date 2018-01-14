@@ -62,10 +62,13 @@ public class UserInputThread extends Thread {
 					String message = String.join(" ", messageArray);
 					peer.messageSingle(test[1], Integer.parseInt(test[2]),message);
 				}
-				
-				else{
+				else if(test[0].equalsIgnoreCase("LIST"))
+				{
 					peer.printPeers();
-					System.out.println("Falsche Eingabe");
+				}
+				else{
+					
+					System.out.println("Unbekannter Befehl");
 				}
 				
 			}

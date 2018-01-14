@@ -39,7 +39,7 @@ public class ClientHandler extends Thread  {
 			
 			String strInput;
 			
-			while(buff.ready() && (strInput = buff.readLine()) != null)
+			while(buff.ready() && (strInput = buff.readLine()) != null)				//"Abhören" des StreamsS
 			{
 				//System.out.println(strInput);
 				String[] test =	strInput.split(" ");
@@ -58,7 +58,7 @@ public class ClientHandler extends Thread  {
 						if(exists(commPeer))
 						{
 							//System.out.println("exists");
-							commPeer = getListElement(commPeer);    //commPeer verweist nun auf das tatsächliche Element in der Liste knownPeers
+							commPeer = getListElement(commPeer);   						 //commPeer verweist nun auf das tatsächliche Element in der Liste knownPeers
 							commPeer.setLastPoke(System.currentTimeMillis() / 1000L);
 						}
 						else
@@ -68,31 +68,31 @@ public class ClientHandler extends Thread  {
 							
 							
 							peer.addPeer(commPeer);
-							peer.poke(commPeer.getIp(),commPeer.getPort());
-							peer.pokeAll(commPeer);		//Alle bekannten Peers werden über neuen Teilnehmer benachrichtigt
-							       	//Poke mit eigenen Daten als Antwort
+							peer.poke(commPeer.getIp(),commPeer.getPort());				//Poke mit eigenen Daten als Antwort
+							peer.pokeAll(commPeer);										//Alle bekannten Peers werden über neuen Teilnehmer benachrichtigt
+							       	
 						}
 						
 					}
 				}
 				else if(test[0].equals("DISCONNECT"))
 				{
-					System.out.println("disonnect"); //kontrollausgabe
+					
 					commPeer = new PeerListEntry(test[1],test[2],Integer.parseInt(test[3]));
 					
 					if(exists(commPeer))
 					{
 						
-						commPeer = getListElement(commPeer);
-						peer.getKnownPeers().remove(commPeer);
-						peer.disconnect(test[1],test[2],Integer.parseInt(test[3]));
+						commPeer = getListElement(commPeer);							//
+						peer.getKnownPeers().remove(commPeer);							//Client wird aus Liste entfernt
+						peer.disconnect(test[1],test[2],Integer.parseInt(test[3]));		//und schließlich wird die DISCONNECT Nachricht an alle bekannten Peers weitergeleitet
 					}
 					
 				}
 				
 				else if(test[0].equals("MESSAGE"))
 				{
-					System.out.print("Nachricht von "+ test[1] + ":");
+					System.out.print("Nachricht von "+ test[1] + ":");					//Inhalt der Nachricht wird ausgegeben
 					for(int i = 4; i < test.length; i++){
 						System.out.print(" "+test[i]);
 					}
@@ -105,14 +105,14 @@ public class ClientHandler extends Thread  {
 			
 		} catch (IOException e) {
 			System.out.println("End of Stream");
-			e.printStackTrace();
+			
 		}
 		
 		
 	}
 	
 	
-	public boolean exists(PeerListEntry entry)
+	public boolean exists(PeerListEntry entry)																					//Existiert ein Peer mit diesen Daten schon
 	{
 		for(PeerListEntry compare : peer.getKnownPeers())
 		{
@@ -127,7 +127,7 @@ public class ClientHandler extends Thread  {
 		return false;
 	}
 	
-	public synchronized PeerListEntry getListElement(PeerListEntry entry)
+	public synchronized PeerListEntry getListElement(PeerListEntry entry)														//Verweist auf das tatsächliche Element in der Peer Liste
 	{
 		for(int i=0; i<peer.getKnownPeers().size();i++)
 		{
